@@ -1,7 +1,7 @@
 //
 //  GFCacheProgressSlider.h
 //  AudioAndVideo
-//
+//  自封装的进度条（带缓存进度）
 //  Created by XinKun on 2017/12/4.
 //  Copyright © 2017年 North_feng. All rights reserved.
 //

@@ -1,7 +1,7 @@
 //
 //  GFAVPlayerItem.h
 //  GFAPP
-//
+//  自定义的AVPlayerItem
 //  Created by XinKun on 2017/12/5.
 //  Copyright © 2017年 North_feng. All rights reserved.
 //
