@@ -38,8 +38,13 @@ typedef NS_ENUM(NSUInteger, AVDirection) {
     id _playTimeObserver;
     
     BOOL _isPause;//调用暂停功能
+
+    float _progressCache;//当前缓存进度
     
 }
+
+///当前播放进度
+@property (nonatomic,assign) float progressPlay;
 
 //视屏总时长
 @property (nonatomic, assign) CGFloat duration;
@@ -72,13 +77,14 @@ typedef NS_ENUM(NSUInteger, AVDirection) {
 #define TimeColor [UIColor whiteColor]
 #define TimeFont 10
 
-NSString *imagePlay = @"ic_video_paly@2x";
-NSString *imageBigPlay = @"ic_video_play_big@2x";
-NSString *imagePause = @"ic_video_pause@2x";
-NSString *imageProgress = @"av_progressTime@2x";
-NSString *imageMiniScree = @"ic_video_minimize@2x";
-NSString *imageFullScree = @"ic_video_fullscreen@2x";
-NSString *imageBack = @"ic_detail_back@2x";
+#pragma mark - 这里设置切图，如果喜欢这样个UI样式布局，可以只更改切图便可
+NSString *imagePlay = @"ic_video_paly@2x";//播放按钮
+NSString *imageBigPlay = @"ic_video_play_big@2x";//视频画面中间的暂停的大播放按钮
+NSString *imagePause = @"ic_video_pause@2x";//暂停按钮
+NSString *imageProgress = @"av_progressTime@2x";//进度条上的圆点切图
+NSString *imageMiniScree = @"ic_video_minimize@2x";//恢复小屏按钮
+NSString *imageFullScree = @"ic_video_fullscreen@2x";//全屏按钮
+NSString *imageBack = @"ic_detail_back@2x";//返回按钮
 
 @implementation GFAVPlayerView
 
@@ -89,11 +95,13 @@ NSString *imageBack = @"ic_detail_back@2x";
         
         //初始化一些数据
         _isPause = NO;
+        _progressPlay = 0.;
+        _progressCache = 0.;
         
         [self createViewsWithFrame:frame];
         
         /* 不使用这种方式进行横竖屏切换
-         //监听横竖屏切换
+         //监听横竖屏切换 （这个可以自行制定，来监听横竖屏改变切图状态）
          [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:) name:UIDeviceOrientationDidChangeNotification object:nil];
          */
         
@@ -122,6 +130,10 @@ NSString *imageBack = @"ic_detail_back@2x";
     [self pause];
     CMTime dur = _player.currentItem.duration;
     [_player seekToTime:CMTimeMultiplyByFloat64(dur, 0.)];
+    
+    if ([self.delegate respondsToSelector:@selector(AVPlayerPlayEnd)]) {
+        [self.delegate AVPlayerPlayEnd];
+    }
     
 }
 
@@ -246,8 +258,14 @@ NSString *imageBack = @"ic_detail_back@2x";
                 _player = [[AVPlayer alloc] initWithPlayerItem:item];
             }
             
-            //监测播放状态  来  处理 视频暂停播放的情况（iOS10）
-            [_player addObserver:self forKeyPath:@"timeControlStatus" options:NSKeyValueObservingOptionNew context:nil];
+            //******** 为了做版本适配 *********
+            if (@available(iOS 10.0, *)) {
+                //监测播放状态  来  处理 视频暂停播放的情况（iOS10）
+                [_player addObserver:self forKeyPath:@"timeControlStatus" options:NSKeyValueObservingOptionNew context:nil];
+            }else{
+                //监测观察播放进度 与 缓存进度比较判断是否加载受阻（受网络原因）
+                [self addObserver:self forKeyPath:@"progressPlay" options:NSKeyValueObservingOptionNew context:nil];
+            }
             
             //需要时时显示播放的进度
             //根据播放的帧数、速率，进行时间的异步(在子线程中完成)获取
@@ -266,6 +284,10 @@ NSString *imageBack = @"ic_detail_back@2x";
                 
                 float pro = current*1.0/weakSelf.duration;
                 if (pro >= 0.0 && pro <= 1.0) {
+                    
+                    //当前播放进度全局变量
+                    weakSelf.progressPlay = pro;
+                    
                     //不断改变播放进度条
                     weakSlider.value     = pro;
                     //不断改变播放时间
@@ -274,6 +296,9 @@ NSString *imageBack = @"ic_detail_back@2x";
             }];
         }else if (status == AVKeyValueStatusFailed){
             NSLog(@"加载失败");
+            if ([self.delegate respondsToSelector:@selector(AVPlayerLoadFailed)]) {
+                [self.delegate AVPlayerLoadFailed];
+            }
         }
         
     }];
@@ -312,17 +337,23 @@ NSString *imageBack = @"ic_detail_back@2x";
                     [self play];
                     
                     //关闭等待视图
-                    NSLog(@"缓存已满足，开始播放");
+                    NSLog(@"资源已链接，开始加载播放");
                 }
                     break;
                 case AVPlayerStatusFailed:{
                     NSLog(@"AVPlayerStatusFailed:加载失败，网络或者服务器出现问题");
                     [self pause];
+                    if ([self.delegate respondsToSelector:@selector(AVPlayerLoadFailed)]) {
+                        [self.delegate AVPlayerLoadFailed];
+                    }
                 }
                     break;
                 case AVPlayerStatusUnknown:{
                     NSLog(@"AVPlayerStatusUnknown:未知状态，此时不能播放");
                     [self pause];
+                    if ([self.delegate respondsToSelector:@selector(AVPlayerLoadFailed)]) {
+                        [self.delegate AVPlayerLoadFailed];
+                    }
                 }
                     break;
                     
@@ -331,10 +362,13 @@ NSString *imageBack = @"ic_detail_back@2x";
             }
             
         } else if ([keyPath isEqualToString:@"loadedTimeRanges"]) {
-            //监听播放器的下载进度
+            //监听播放器的缓存进度
             NSTimeInterval timeInterval = [self availableDuration];
             float pro = timeInterval/self.duration;
             if (pro >= 0.0 && pro <= 1.0) {
+                
+                //当前缓存进度全局变量
+                _progressCache = pro;
                 //NSLog(@"缓冲进度：%f",pro);
                 //设置缓存进度
                 [_progressSlider setCacheProgressValue:pro];
@@ -344,15 +378,24 @@ NSString *imageBack = @"ic_detail_back@2x";
             NSLog(@"playbackLikelyToKeepUp缓冲达到可播放程度了");
             
         }else if ([keyPath isEqualToString:@"playbackBufferFull"]){
-            //这个不会触发
+            //这个不会触发（视频资源已全部加载完&&已缓存完视频资源）
             NSLog(@"playbackBufferFull缓存满了");
             
         }else if ([keyPath isEqualToString:@"playbackBufferEmpty"]) {
             //监听播放器在缓冲数据的状态
             NSLog(@"playbackBufferEmpty缓冲不足");
+            if (@available(iOS 10.0, *)) {
+                
+            }else{
+                //开启等待视图
+                [self.waitingView startAnimating];
+                if ([self.delegate respondsToSelector:@selector(AVPlayerCacheLoadingBreakForNetWork)]) {
+                    [self.delegate AVPlayerCacheLoadingBreakForNetWork];
+                }
+            }
         }
         
-    }else if ([object isKindOfClass:[AVPlayer class]]){
+    }else if ([object isKindOfClass:[GFAVPlayerView class]]){
         
         if (@available(iOS 10.0, *)) {
             if ([keyPath isEqualToString:@"timeControlStatus"]) {
@@ -370,16 +413,24 @@ NSString *imageBack = @"ic_detail_back@2x";
                         [self.waitingView stopAnimating];
                         break;
                     case AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate:
-                        NSLog(@"AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate:播放正在缓存");
-                        //开始菊花(这里可以判断网络的状态，并进行触发自动停止播放&&提示用户网络状态不好)
-                        [self.waitingView startAnimating];
+                        NSLog(@"AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate:正在缓存");
+                        
                         //AVPlayerWaitingToMinimizeStallsReason没有缓存
                         NSLog(@"------>缓存原因：%@",_player.reasonForWaitingToPlay);
+                        
+                        //开始菊花(这里可以判断网络的状态，并进行触发自动停止播放&&提示用户网络状态不好)
+                        [self.waitingView startAnimating];
+                        if ([self.delegate respondsToSelector:@selector(AVPlayerCacheLoadingBreakForNetWork)]) {
+                            [self.delegate AVPlayerCacheLoadingBreakForNetWork];
+                        }
                         break;
                     case AVPlayerTimeControlStatusPlaying:
                         NSLog(@"AVPlayerTimeControlStatusPlaying:播放开始");
                         //停止菊花
                         [self.waitingView stopAnimating];
+                        if ([self.delegate respondsToSelector:@selector(AVPlayerCacheBufferFullToPlay)]) {
+                            [self.delegate AVPlayerCacheBufferFullToPlay];
+                        }
                         break;
                     default:
                         break;
@@ -388,7 +439,13 @@ NSString *imageBack = @"ic_detail_back@2x";
         } else {
             // Fallback on earlier versions
             //iOS10以下
-            
+            if ([keyPath isEqualToString:@"progressPlay"]) {
+                NSLog(@"正在播放");
+                [self.waitingView stopAnimating];
+                if ([self.delegate respondsToSelector:@selector(AVPlayerCacheBufferFullToPlay)]) {
+                    [self.delegate AVPlayerCacheBufferFullToPlay];
+                }
+            }
         }
         
     }
@@ -605,7 +662,11 @@ NSString *imageBack = @"ic_detail_back@2x";
 //播放器的单击事件<控制底部和顶部view的显示与隐藏>
 - (void)tapGROne:(UITapGestureRecognizer *)tapGR{
     BOOL showOrHide = !_topView.isHidden;
-    [self.delegate AVPlayerToolBarViewShowOrHideOnAVPlayerView:showOrHide];
+    
+    if ([self.delegate respondsToSelector:@selector(AVPlayerToolBarViewShowOrHideOnAVPlayerView:)]) {
+        [self.delegate AVPlayerToolBarViewShowOrHideOnAVPlayerView:showOrHide];
+    }
+    
     [UIView animateWithDuration:.5 animations:^{
         _topView.hidden = !_topView.isHidden;
         _toolView.hidden = !_toolView.isHidden;
@@ -659,8 +720,10 @@ NSString *imageBack = @"ic_detail_back@2x";
 - (void)goBack:(UIButton *)btn
 {
     //点击返回按钮
-    [self.delegate AVPlayerClickBackButtonOnAVPlayerView:nil];
-    
+    if ([self.delegate respondsToSelector:@selector(AVPlayerClickBackButtonOnAVPlayerView:)]) {
+        //触发回调
+        [self.delegate AVPlayerClickBackButtonOnAVPlayerView:nil];
+    }
 }
 
 
@@ -672,7 +735,10 @@ NSString *imageBack = @"ic_detail_back@2x";
      //并且进行重新布局
      //self.frame = GF_SCREEN_BOUNDS;
      BOOL isFullScreen = _fullScreenBtn.selected;
-     [self.delegate AVPlayerClickFullScreenButtonOnAVPlayerView:isFullScreen];
+     if ([self.delegate respondsToSelector:@selector(AVPlayerClickFullScreenButtonOnAVPlayerView:)]) {
+         [self.delegate AVPlayerClickFullScreenButtonOnAVPlayerView:isFullScreen];
+     }
+     
 }
 
 
@@ -839,10 +905,10 @@ NSString *imageBack = @"ic_detail_back@2x";
     }
     else {
         if (second < 3600) {
-            time = [NSString stringWithFormat:@"%02ld:%02ld",second/60,second%60];
+            time = [NSString stringWithFormat:@"%02d:%02d",second/60,second%60];
         }
         else {
-            time = [NSString stringWithFormat:@"%02ld:%02ld:%02ld",second/3600,(second-second/3600*3600)/60,second%60];
+            time = [NSString stringWithFormat:@"%02d:%02d:%02d",second/3600,(second-second/3600*3600)/60,second%60];
         }
     }
     return time;
@@ -862,6 +928,8 @@ NSString *imageBack = @"ic_detail_back@2x";
     [_player.currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
     //播放状态
     [_player removeObserver:self forKeyPath:@"timeControlStatus"];
+    [self removeObserver:self forKeyPath:@"progressPlay"];
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 

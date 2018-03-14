@@ -1,7 +1,7 @@
 //
 //  GFAVPlayerViewController.h
 //  GFAPP
-//  播放控制器视图可以直接使用
+//  播放控制器视图可以直接使用（使用Demo样例）
 //  Created by XinKun on 2017/12/6.
 //  Copyright © 2017年 North_feng. All rights reserved.
 //

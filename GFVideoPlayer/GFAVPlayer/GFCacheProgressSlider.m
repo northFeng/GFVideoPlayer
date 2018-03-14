@@ -50,7 +50,7 @@
     
     _progressView.progress = value;
     if (value >= _progressView.progress) {
-       
+        return ;
     }
 }
 
