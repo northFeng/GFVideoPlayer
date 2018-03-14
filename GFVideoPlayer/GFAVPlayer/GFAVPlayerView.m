@@ -905,10 +905,10 @@ NSString *imageBack = @"ic_detail_back@2x";//返回按钮
     }
     else {
         if (second < 3600) {
-            time = [NSString stringWithFormat:@"%02d:%02d",second/60,second%60];
+            time = [NSString stringWithFormat:@"%02ld:%02ld",second/60,second%60];
         }
         else {
-            time = [NSString stringWithFormat:@"%02d:%02d:%02d",second/3600,(second-second/3600*3600)/60,second%60];
+            time = [NSString stringWithFormat:@"%02ld:%02ld:%02ld",second/3600,(second-second/3600*3600)/60,second%60];
         }
     }
     return time;
@@ -931,6 +931,10 @@ NSString *imageBack = @"ic_detail_back@2x";//返回按钮
     [self removeObserver:self forKeyPath:@"progressPlay"];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    [_player cancelPendingPrerolls];
+    [_player replaceCurrentItemWithPlayerItem:nil];
+    _player = nil;
 }
 
 
