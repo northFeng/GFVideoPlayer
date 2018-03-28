@@ -927,8 +927,13 @@ NSString *imageBack = @"ic_detail_back@2x";//返回按钮
     [_player.currentItem removeObserver:self forKeyPath:@"playbackBufferFull"];
     [_player.currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
     //播放状态
-    [_player removeObserver:self forKeyPath:@"timeControlStatus"];
-    [self removeObserver:self forKeyPath:@"progressPlay"];
+    if (@available(iOS 10.0, *)){
+        [_player removeObserver:self forKeyPath:@"timeControlStatus"];
+    }else{
+        [self removeObserver:self forKeyPath:@"progressPlay"];
+    }
+    
+    
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
