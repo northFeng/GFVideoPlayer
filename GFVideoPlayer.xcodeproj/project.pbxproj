@@ -32,7 +32,6 @@
 		7C54186920577617007662EA /* ic_video_minimize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C54185720577617007662EA /* ic_video_minimize@2x.png */; };
 		7C54186A20577617007662EA /* av_progressTime@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C54185820577617007662EA /* av_progressTime@2x.png */; };
 		7C54186B20577617007662EA /* GFAVPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C54185920577617007662EA /* GFAVPlayerViewController.m */; };
-		7C541889205776C9007662EA /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7C54186D205776C9007662EA /* LICENSE */; };
 		7C54188A205776C9007662EA /* NSLayoutConstraint+MASDebugAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C541870205776C9007662EA /* NSLayoutConstraint+MASDebugAdditions.m */; };
 		7C54188B205776C9007662EA /* ViewController+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C541879205776C9007662EA /* ViewController+MASAdditions.m */; };
 		7C54188C205776C9007662EA /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C54187D205776C9007662EA /* MASCompositeConstraint.m */; };
@@ -43,7 +42,7 @@
 		7C541891205776C9007662EA /* MASConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C541884205776C9007662EA /* MASConstraint.m */; };
 		7C541892205776C9007662EA /* MASViewConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C541886205776C9007662EA /* MASViewConstraint.m */; };
 		7C541893205776C9007662EA /* MASViewAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C541887205776C9007662EA /* MASViewAttribute.m */; };
-		7C541894205776C9007662EA /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 7C541888205776C9007662EA /* README.md */; };
+		ABAAB41F209997E2000901A6 /* libc++abi.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = ABAAB41E209997E2000901A6 /* libc++abi.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,7 +100,6 @@
 		7C54185820577617007662EA /* av_progressTime@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "av_progressTime@2x.png"; sourceTree = "<group>"; };
 		7C54185920577617007662EA /* GFAVPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFAVPlayerViewController.m; sourceTree = "<group>"; };
 		7C54185A20577617007662EA /* GFAVPlayerItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFAVPlayerItem.h; sourceTree = "<group>"; };
-		7C54186D205776C9007662EA /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		7C54186F205776C9007662EA /* MASCompositeConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASCompositeConstraint.h; sourceTree = "<group>"; };
 		7C541870205776C9007662EA /* NSLayoutConstraint+MASDebugAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLayoutConstraint+MASDebugAdditions.m"; sourceTree = "<group>"; };
 		7C541871205776C9007662EA /* MASConstraint+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MASConstraint+Private.h"; sourceTree = "<group>"; };
@@ -127,7 +125,7 @@
 		7C541885205776C9007662EA /* ViewController+MASAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ViewController+MASAdditions.h"; sourceTree = "<group>"; };
 		7C541886205776C9007662EA /* MASViewConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASViewConstraint.m; sourceTree = "<group>"; };
 		7C541887205776C9007662EA /* MASViewAttribute.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASViewAttribute.m; sourceTree = "<group>"; };
-		7C541888205776C9007662EA /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		ABAAB41E209997E2000901A6 /* libc++abi.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++abi.tbd"; path = "usr/lib/libc++abi.tbd"; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ABAAB41F209997E2000901A6 /* libc++abi.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,6 +161,7 @@
 				7C54182A205775F1007662EA /* GFVideoPlayerTests */,
 				7C541835205775F1007662EA /* GFVideoPlayerUITests */,
 				7C541810205775F1007662EA /* Products */,
+				ABAAB41D209997E2000901A6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -178,7 +178,7 @@
 		7C541811205775F1007662EA /* GFVideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				7C54186C205776C9007662EA /* Masonry */,
+				7C54186E205776C9007662EA /* Masonry */,
 				7C54184420577617007662EA /* GFAVPlayer */,
 				7C541812205775F1007662EA /* AppDelegate.h */,
 				7C541813205775F1007662EA /* AppDelegate.m */,
@@ -247,16 +247,6 @@
 			path = ImageResource;
 			sourceTree = "<group>";
 		};
-		7C54186C205776C9007662EA /* Masonry */ = {
-			isa = PBXGroup;
-			children = (
-				7C54186D205776C9007662EA /* LICENSE */,
-				7C54186E205776C9007662EA /* Masonry */,
-				7C541888205776C9007662EA /* README.md */,
-			);
-			path = Masonry;
-			sourceTree = "<group>";
-		};
 		7C54186E205776C9007662EA /* Masonry */ = {
 			isa = PBXGroup;
 			children = (
@@ -286,7 +276,16 @@
 				7C541886205776C9007662EA /* MASViewConstraint.m */,
 				7C541887205776C9007662EA /* MASViewAttribute.m */,
 			);
-			path = Masonry;
+			name = Masonry;
+			path = Masonry/Masonry;
+			sourceTree = "<group>";
+		};
+		ABAAB41D209997E2000901A6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ABAAB41E209997E2000901A6 /* libc++abi.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -401,10 +400,8 @@
 				7C54186820577617007662EA /* ic_video_minimize@3x.png in Resources */,
 				7C54186120577617007662EA /* ic_video_play_big@2x.png in Resources */,
 				7C54186420577617007662EA /* ic_video_fullscreen@2x.png in Resources */,
-				7C541894205776C9007662EA /* README.md in Resources */,
 				7C54186920577617007662EA /* ic_video_minimize@2x.png in Resources */,
 				7C54186620577617007662EA /* ic_video_paly@2x.png in Resources */,
-				7C541889205776C9007662EA /* LICENSE in Resources */,
 				7C54181F205775F1007662EA /* LaunchScreen.storyboard in Resources */,
 				7C54181C205775F1007662EA /* Assets.xcassets in Resources */,
 				7C54185E20577617007662EA /* ic_video_pause@3x.png in Resources */,
@@ -617,9 +614,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = HPSJR78MLQ;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = GFVideoPlayer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.feng.GFVideoPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -632,9 +629,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = HPSJR78MLQ;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = GFVideoPlayer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.feng.GFVideoPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
